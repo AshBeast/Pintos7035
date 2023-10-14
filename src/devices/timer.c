@@ -84,8 +84,15 @@ timer_elapsed (int64_t then)
   return timer_ticks () - then;
 }
 
-/* Sleeps for approximately TICKS timer ticks.  Interrupts must
-   be turned on. */
+/** check
+ * Puts the current thread to sleep for the specified number of timer ticks.
+ * If the number of ticks is negative or zero, the function returns immediately.
+ * Otherwise, it sets the wake-up tick for the current thread and puts it to sleep.
+ * 
+ * Prerequisite: Interrupts must be turned ON before calling this function.
+ *
+ * @param ticks Number of timer ticks to sleep.
+ */
 void
 timer_sleep (int64_t ticks)
 {
@@ -169,7 +176,13 @@ timer_print_stats (void)
   printf ("Timer: %"PRId64" ticks\n", timer_ticks ());
 }
 
-/* Timer interrupt handler. */
+/**check
+ * Timer interrupt handler.
+ * This handler increments the system tick, updates thread statistics,
+ * and checks for threads that need to be awakened.
+ *
+ * @param args UNUSED.
+ */
 static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {

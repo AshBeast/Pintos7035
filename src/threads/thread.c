@@ -28,6 +28,9 @@ static struct list ready_list;
    when they are first scheduled and removed when they exit. */
 static struct list all_list;
 
+/* check List of processes in THREAD_SLEEP state, that is, processes
+   that are waiting for a certain time to elapse before they 
+   can transition to ready or running state. */
 static struct list sleep_list;
 
 /* Idle thread. */
@@ -94,6 +97,7 @@ static bool is_thread (struct thread *) UNUSED;
   lock_init (&tid_lock);
   list_init (&ready_list);
   list_init (&all_list);
+  // Create an initial thread.
   list_init (&sleep_list);
 
   /* Set up a thread structure for the running thread. */
@@ -245,6 +249,12 @@ thread_unblock (struct thread *t)
   intr_set_level (old_level);
 }
 
+/** check
+ * Puts the current thread to sleep. 
+ * The thread is added to a list of sleeping threads (`sleep_list`), 
+ * ordered by the time they should wake up. The thread will be blocked 
+ * until it's woken up after its specified sleep duration.
+ */
 void
 thread_sleep (void)
 {
@@ -260,6 +270,13 @@ thread_sleep (void)
   intr_set_level (old_level);
 }
 
+/**
+ * Wakes up sleeping threads that have reached their wake-up time.
+ * Iterates through the `sleep_list`, and unblocks threads whose 
+ * wake-up tick is less than or equal to the current number of ticks.
+ * 
+ * @param ticks Current number of timer ticks.
+ */
 void
 thread_wake (int64_t ticks)
 {
@@ -279,6 +296,16 @@ thread_wake (int64_t ticks)
   }
 }
 
+/**
+ * A comparator function used to determine the order of threads in `sleep_list`.
+ * Compares two threads based on their wake-up tick time. Returns true if the 
+ * wake-up tick of the first thread is earlier than that of the second.
+ * 
+ * @param a The first thread's list element.
+ * @param b The second thread's list element.
+ * @param aux Auxiliary data, unused in this function.
+ * @return True if thread A should wake up earlier than thread B, false otherwise.
+ */
 bool
 earlier_wake_up(struct list_elem *a, struct  list_elem *b, void *aux)
 {
