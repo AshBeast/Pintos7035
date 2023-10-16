@@ -249,7 +249,7 @@ thread_unblock (struct thread *t)
   intr_set_level (old_level);
 }
 
-/** check
+/**
  * Puts the current thread to sleep. 
  * The thread is added to a list of sleeping threads (`sleep_list`), 
  * ordered by the time they should wake up. The thread will be blocked 
@@ -307,7 +307,7 @@ thread_wake (int64_t ticks)
  * @return True if thread A should wake up earlier than thread B, false otherwise.
  */
 bool
-earlier_wake_up(struct list_elem *a, struct  list_elem *b, void *aux)
+earlier_wake_up(const struct list_elem *a, const struct  list_elem *b, void *aux UNUSED)
 {
   struct thread *thread_a = list_entry (a, struct thread, elem);
   struct thread *thread_b = list_entry (b, struct thread, elem);

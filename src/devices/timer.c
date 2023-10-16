@@ -84,7 +84,7 @@ timer_elapsed (int64_t then)
   return timer_ticks () - then;
 }
 
-/** check
+/**
  * Puts the current thread to sleep for the specified number of timer ticks.
  * If the number of ticks is negative or zero, the function returns immediately.
  * Otherwise, it sets the wake-up tick for the current thread and puts it to sleep.
@@ -97,7 +97,7 @@ void
 timer_sleep (int64_t ticks)
 {
   ASSERT (intr_get_level () == INTR_ON);
-  if(ticks < 0)
+  if(ticks <= 0)
   {
     return;
   }
@@ -176,10 +176,10 @@ timer_print_stats (void)
   printf ("Timer: %"PRId64" ticks\n", timer_ticks ());
 }
 
-/**check
+/**
  * Timer interrupt handler.
  * This handler increments the system tick, updates thread statistics,
- * and checks for threads that need to be awakened.
+ * and checks for threads that need to be awakened and wakes them up.
  *
  * @param args UNUSED.
  */

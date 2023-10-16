@@ -90,7 +90,7 @@ struct thread
   int priority;                       /* Priority. */
   struct list_elem allelem;           /* List element for all threads list. */
 
-   /* Shared between thread.c and synch.c. */
+   /* The tick when the thread should wake up. */
   int64_t wake_up_tick;
 
   /* Shared between thread.c and synch.c. */
@@ -130,7 +130,7 @@ void thread_unblock (struct thread *);
  */
 void thread_sleep (void);
 void thread_wake (int64_t ticks);
-bool earlier_wake_up(struct list_elem *a, struct  list_elem *b, void *aux);
+bool earlier_wake_up(const struct list_elem *a, const struct  list_elem *b, void *aux);
 
 struct thread *thread_current (void);
 tid_t thread_tid (void);
