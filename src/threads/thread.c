@@ -247,6 +247,7 @@ thread_unblock (struct thread *t)
   list_push_back (&ready_list, &t->elem);
   t->status = THREAD_READY;
   intr_set_level (old_level);
+  printf("interrupt: %d \n", intr_get_level());
 }
 
 /**
@@ -292,7 +293,9 @@ thread_wake (int64_t ticks)
     }
     e = list_next (e);
     list_pop_front(&sleep_list);
-    thread_unblock(t);
+    ASSERT (t->status == THREAD_BLOCKED);
+    list_push_back (&ready_list, &t->elem);
+    t->status = THREAD_READY;
   }
 }
 
