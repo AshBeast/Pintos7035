@@ -28,7 +28,7 @@ static struct list ready_list;
    when they are first scheduled and removed when they exit. */
 static struct list all_list;
 
-/* check List of processes in THREAD_SLEEP state, that is, processes
+/* List of processes in THREAD_SLEEP state, that is, processes
    that are waiting for a certain time to elapse before they 
    can transition to ready or running state. */
 static struct list sleep_list;
@@ -89,15 +89,15 @@ static bool is_thread (struct thread *) UNUSED;
 
    It is not safe to call thread_current() until this function
    finishes. */
-    void
-    thread_init (void)
+void
+thread_init (void)
 {
   ASSERT (intr_get_level () == INTR_OFF);
 
   lock_init (&tid_lock);
   list_init (&ready_list);
   list_init (&all_list);
-  // Create an initial thread.
+  // Initialize sleep_list.
   list_init (&sleep_list);
 
   /* Set up a thread structure for the running thread. */
@@ -227,6 +227,8 @@ thread_block (void)
   schedule ();
 }
 
+/* Puts the current thread to sleep.  It will not be scheduled
+   again until awoken by thread_wake(). */
 void
 thread_asleep (void)
 {
@@ -257,13 +259,12 @@ thread_unblock (struct thread *t)
   list_push_back (&ready_list, &t->elem);
   t->status = THREAD_READY;
   intr_set_level (old_level);
-  printf("interrupt: %d \n", intr_get_level());
 }
 
 /**
  * Puts the current thread to sleep. 
  * The thread is added to a list of sleeping threads (`sleep_list`), 
- * ordered by the time they should wake up. The thread will be blocked 
+ * ordered by the time they should wake up. The thread will be asleep
  * until it's woken up after its specified sleep duration.
  */
 void

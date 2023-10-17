@@ -11,8 +11,8 @@ enum thread_status
   THREAD_RUNNING,     /* Running thread. */
   THREAD_READY,       /* Not running but ready to run. */
   THREAD_BLOCKED,     /* Waiting for an event to trigger. */
-  THREAD_DYING,        /* About to be destroyed. */
-  THREAD_ASLEEP       /* not running for a period of time or triggered*/
+  THREAD_DYING,       /* About to be destroyed. */
+  THREAD_ASLEEP       /* Waiting for time to awake*/
 };
 
 /* Thread identifier type.
@@ -91,7 +91,7 @@ struct thread
   int priority;                       /* Priority. */
   struct list_elem allelem;           /* List element for all threads list. */
 
-   /* The tick when the thread should wake up. */
+  /* The tick when the thread should wake up. */
   int64_t wake_up_tick;
 
   /* Shared between thread.c and synch.c. */
@@ -125,10 +125,12 @@ void thread_unblock (struct thread *);
 
 /**
  * Thread sleep management:
+ * - `thread_asleep`: Switches the status of the current thread to THREAD_ASLEEP
  * - `thread_sleep`: Puts the current thread to sleep.
  * - `thread_wake`: Wakes threads that have reached their wake-up ticks.
  * - `earlier_wake_up`: Orders threads by wake-up time for sleep_list.
  */
+void thread_asleep (void);
 void thread_sleep (void);
 void thread_wake (int64_t ticks);
 bool earlier_wake_up(const struct list_elem *a, const struct  list_elem *b, void *aux);
