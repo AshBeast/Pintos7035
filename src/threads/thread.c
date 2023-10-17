@@ -227,6 +227,16 @@ thread_block (void)
   schedule ();
 }
 
+void
+thread_asleep (void)
+{
+  ASSERT (!intr_context ());
+  ASSERT (intr_get_level () == INTR_OFF);
+
+  thread_current ()->status = THREAD_ASLEEP;
+  schedule ();
+}
+
 /* Transitions a blocked thread T to the ready-to-run state.
    This is an error if T is not blocked.  (Use thread_yield() to
    make the running thread ready.)
@@ -266,7 +276,7 @@ thread_sleep (void)
   if (cur != idle_thread)
   {
     list_insert_ordered (&sleep_list, &cur->elem, earlier_wake_up, NULL);
-    thread_block();
+    thread_asleep();
   }
   intr_set_level (old_level);
 }
@@ -293,7 +303,7 @@ thread_wake (int64_t ticks)
     }
     e = list_next (e);
     list_pop_front(&sleep_list);
-    ASSERT (t->status == THREAD_BLOCKED);
+    ASSERT (t->status == THREAD_ASLEEP);
     list_push_back (&ready_list, &t->elem);
     t->status = THREAD_READY;
   }
