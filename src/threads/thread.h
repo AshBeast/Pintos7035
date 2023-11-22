@@ -94,6 +94,12 @@ struct thread
   /* The tick when the thread should wake up. */
   int64_t wake_up_tick;
 
+  /* A thread's 'niceness'. */
+  int nice;
+
+  /* A thread's recent cpu usage. */
+  int recent_cpu;
+
   /* Shared between thread.c and synch.c. */
   struct list_elem elem;              /* List element. */
 
@@ -129,11 +135,18 @@ void thread_unblock (struct thread *);
  * - `thread_sleep`: Puts the current thread to sleep.
  * - `thread_wake`: Wakes threads that have reached their wake-up ticks.
  * - `earlier_wake_up`: Orders threads by wake-up time for sleep_list.
+ * - `priority_order`: Orders threads by highest priority.
  */
 void thread_asleep (void);
 void thread_sleep (void);
 void thread_wake (int64_t ticks);
 bool earlier_wake_up(const struct list_elem *a, const struct  list_elem *b, void *aux);
+bool priority_order(const struct list_elem *a, const struct  list_elem *b, void *aux);
+void thread_compute_load_avg(void);
+void thread_compute_recent_cpu(struct thread *t, void *aux);
+void thread_compute_recent_cpu_for_all(void);
+void thread_compute_priority(struct thread *t, void *aux);
+void thread_compute_priority_for_all(void);
 
 struct thread *thread_current (void);
 tid_t thread_tid (void);
