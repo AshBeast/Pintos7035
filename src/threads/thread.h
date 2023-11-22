@@ -142,6 +142,7 @@ void thread_sleep (void);
 void thread_wake (int64_t ticks);
 bool earlier_wake_up(const struct list_elem *a, const struct  list_elem *b, void *aux);
 bool priority_order(const struct list_elem *a, const struct  list_elem *b, void *aux);
+
 void thread_compute_load_avg(void);
 void thread_compute_recent_cpu(struct thread *t, void *aux);
 void thread_compute_recent_cpu_for_all(void);

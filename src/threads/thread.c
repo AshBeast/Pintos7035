@@ -30,7 +30,7 @@ static struct list ready_list;
 static struct list all_list;
 
 /* List of processes in THREAD_SLEEP state, that is, processes
-   that are waiting for a certain time to elapse before they 
+   that are waiting for a certain time to elapse before they
    can transition to ready or running state. */
 static struct list sleep_list;
 
@@ -77,6 +77,7 @@ static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
 
+// The load average to calculate priority using advanced scheduler
 static int load_avg;
 
 /* Initializes the threading system by transforming the code
@@ -214,7 +215,7 @@ thread_create (const char *name, int priority,
   /* Add to run queue. */
   thread_unblock (t);
 
-  if(!thread_mlfqs && priority_order(&cur->elem, &t->elem, NULL))
+  if(&t-> priority >= &cur-> priority)
   {
     thread_yield();
   }
@@ -273,8 +274,8 @@ thread_unblock (struct thread *t)
 }
 
 /**
- * Puts the current thread to sleep. 
- * The thread is added to a list of sleeping threads (`sleep_list`), 
+ * Puts the current thread to sleep.
+ * The thread is added to a list of sleeping threads (`sleep_list`),
  * ordered by the time they should wake up. The thread will be asleep
  * until it's woken up after its specified sleep duration.
  */
@@ -295,9 +296,9 @@ thread_sleep (void)
 
 /**
  * Wakes up sleeping threads that have reached their wake-up time.
- * Iterates through the `sleep_list`, and unblocks threads whose 
+ * Iterates through the `sleep_list`, and unblocks threads whose
  * wake-up tick is less than or equal to the current number of ticks.
- * 
+ *
  * @param ticks Current number of timer ticks.
  */
 void
@@ -323,9 +324,9 @@ thread_wake (int64_t ticks)
 
 /**
  * A comparator function used to determine the order of threads in `sleep_list`.
- * Compares two threads based on their wake-up tick time. Returns true if the 
+ * Compares two threads based on their wake-up tick time. Returns true if the
  * wake-up tick of the first thread is earlier than that of the second.
- * 
+ *
  * @param a The first thread's list element.
  * @param b The second thread's list element.
  * @param aux Auxiliary data, unused in this function.
@@ -359,7 +360,7 @@ priority_order(const struct list_elem *a, const struct  list_elem *b, void *aux 
 {
   struct thread *thread_a = list_entry (a, struct thread, elem);
   struct thread *thread_b = list_entry (b, struct thread, elem);
-  if(thread_a->priority < thread_b->priority) {
+  if(thread_a->priority > thread_b->priority) {
     return true;
   }
   else {
@@ -464,6 +465,7 @@ thread_set_priority (int new_priority)
   {
     thread_current ()->priority = new_priority;
     list_sort(&ready_list, priority_order, NULL);
+    thread_yield();
   }
 }
 

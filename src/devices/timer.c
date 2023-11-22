@@ -89,7 +89,7 @@ timer_elapsed (int64_t then)
  * Puts the current thread to sleep for the specified number of timer ticks.
  * If the number of ticks is negative or zero, the function returns immediately.
  * Otherwise, it sets the wake-up tick for the current thread and puts it to sleep.
- * 
+ *
  * Prerequisite: Interrupts must be turned ON before calling this function.
  *
  * @param ticks Number of timer ticks to sleep.

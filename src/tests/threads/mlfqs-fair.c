@@ -58,7 +58,7 @@ struct thread_info
     int64_t start_time;
     int tick_count;
     int nice;
-    int priority;
+    //int priority;
   };
 
 static void load_thread (void *aux);
@@ -70,7 +70,7 @@ test_mlfqs_fair (int thread_cnt, int nice_min, int nice_step)
   int64_t start_time;
   int nice;
   int i;
-  int priority;
+  //int priority;
 
   ASSERT (thread_mlfqs);
   ASSERT (thread_cnt <= MAX_THREAD_CNT);
@@ -83,7 +83,7 @@ test_mlfqs_fair (int thread_cnt, int nice_min, int nice_step)
   start_time = timer_ticks ();
   msg ("Starting %d threads...", thread_cnt);
   nice = nice_min;
-  priority = PRI_DEFAULT;
+  //priority = PRI_DEFAULT;
   for (i = 0; i < thread_cnt; i++) 
     {
       struct thread_info *ti = &info[i];
@@ -92,12 +92,12 @@ test_mlfqs_fair (int thread_cnt, int nice_min, int nice_step)
       ti->start_time = start_time;
       ti->tick_count = 0;
       ti->nice = nice;
-      ti->priority = priority;
+      //ti->priority = priority;
 
       snprintf(name, sizeof name, "load %d", i);
       thread_create (name, PRI_DEFAULT, load_thread, ti);
 
-      priority = thread_get_priority();
+      //priority = thread_get_priority();
       nice += nice_step;
     }
   msg ("Starting threads took %"PRId64" ticks.", timer_elapsed (start_time));
@@ -108,7 +108,7 @@ test_mlfqs_fair (int thread_cnt, int nice_min, int nice_step)
   for (i = 0; i < thread_cnt; i++)
   {
     msg ("Thread %d received %d ticks.", i, info[i].tick_count);
-    msg ("Thread %d priority is %d.", i, info[i].priority);
+    //msg ("Thread %d priority is %d.", i, info[i].priority);
   }
 
 
