@@ -94,11 +94,13 @@ struct thread
   /* The tick when the thread should wake up. */
   int64_t wake_up_tick;
 
+//************ Change Start ***************
   /* A thread's 'niceness'. */
   int nice;
 
   /* A thread's recent cpu usage. */
   int recent_cpu;
+//************ Change end *****************
 
   /* Shared between thread.c and synch.c. */
   struct list_elem elem;              /* List element. */

@@ -268,6 +268,8 @@ cond_init (struct condition *cond)
   list_init (&cond->waiters);
 }
 
+//************ Change Start ***************
+
 static bool
 cond_sema_order(const struct list_elem *a, const struct list_elem *b, void *aux)
 {
@@ -275,21 +277,30 @@ cond_sema_order(const struct list_elem *a, const struct list_elem *b, void *aux)
   struct semaphore* sem_b = &list_entry (b, struct semaphore_elem, elem)->semaphore;
   struct thread* thread_a;
   struct thread* thread_b;
-  if(list_empty(&sem_a->waiters)) {
+  if(list_empty(&sem_a->waiters))
+  {
     thread_a = aux;
     thread_b = list_entry (list_front (&sem_b->waiters), struct thread, elem);
   }
-  else if(list_empty(&sem_b->waiters)) {
+  else if(list_empty(&sem_b->waiters))
+  {
     thread_a = list_entry (list_front (&sem_a->waiters), struct thread, elem);
     thread_b = aux;
   }
-  else {
+  else
+  {
     thread_a = list_entry (list_front (&sem_a->waiters), struct thread, elem);
     thread_b = list_entry (list_front (&sem_b->waiters), struct thread, elem);
   }
 
-  return (thread_a->priority > thread_b->priority) ? true : false;
+  if (thread_a->priority > thread_b->priority)
+    return true;
+  else
+    return false;
 }
+
+//************ Change End ***************
+
 
 /* Atomically releases LOCK and waits for COND to be signaled by
    some other piece of code.  After COND is signaled, LOCK is
@@ -322,7 +333,11 @@ cond_wait (struct condition *cond, struct lock *lock)
   ASSERT (lock_held_by_current_thread (lock));
 
   sema_init (&waiter.semaphore, 0);
+
+//************ Change Start ***************
   list_insert_ordered (&cond->waiters, &waiter.elem, cond_sema_order, thread_current());
+//************ Change End ***************
+
   lock_release (lock);
   sema_down (&waiter.semaphore);
   lock_acquire (lock);

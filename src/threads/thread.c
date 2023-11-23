@@ -77,22 +77,25 @@ static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
 
-// The load average to calculate priority using advanced scheduler
-static int load_avg;
+//************ Change Start ***************
+  // The load average to calculate priority using advanced scheduler
+  static int load_avg;
+//************ Change End *****************
 
-/* Initializes the threading system by transforming the code
-   that's currently running into a thread.  This can't work in
-   general and it is possible in this case only because loader.S
-   was careful to put the bottom of the stack at a page boundary.
 
-   Also initializes the run queue and the tid lock.
+  /* Initializes the threading system by transforming the code
+     that's currently running into a thread.  This can't work in
+     general and it is possible in this case only because loader.S
+     was careful to put the bottom of the stack at a page boundary.
 
-   After calling this function, be sure to initialize the page
-   allocator before trying to create any threads with
-   thread_create().
+     Also initializes the run queue and the tid lock.
 
-   It is not safe to call thread_current() until this function
-   finishes. */
+     After calling this function, be sure to initialize the page
+     allocator before trying to create any threads with
+     thread_create().
+
+     It is not safe to call thread_current() until this function
+     finishes. */
 void
 thread_init (void)
 {
@@ -103,8 +106,11 @@ thread_init (void)
   list_init (&all_list);
   // Initialize sleep_list.
   list_init (&sleep_list);
+
+//************ Change Start ***************
   // Set load_avg to 0
   load_avg = 0;
+//************ Change End ***************
 
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
@@ -215,10 +221,11 @@ thread_create (const char *name, int priority,
   /* Add to run queue. */
   thread_unblock (t);
 
+//************ Change Start ***************
   if(&t-> priority >= &cur-> priority)
-  {
     thread_yield();
-  }
+//************ Change End ***************
+
 
   return tid;
 }
@@ -268,7 +275,11 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
+
+//************ Change Start ***************
   list_insert_ordered (&ready_list, &t->elem, priority_order, NULL);
+//************ Change End ***************
+
   t->status = THREAD_READY;
   intr_set_level (old_level);
 }
@@ -345,6 +356,8 @@ earlier_wake_up(const struct list_elem *a, const struct  list_elem *b, void *aux
   }
 }
 
+//************ Change Start ***************
+
 /**
  * A comparator function used to determine the order of threads in `ready_list`.
  * Compares two threads based on their priority. Returns true if the
@@ -367,6 +380,9 @@ priority_order(const struct list_elem *a, const struct  list_elem *b, void *aux 
     return false;
   }
 }
+
+//************ Change End ***************
+
 
 /* Returns the name of the running thread. */
 const char *
@@ -434,7 +450,10 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (cur != idle_thread)
+//************ Change Start ***************
     list_insert_ordered (&ready_list, &cur->elem, priority_order, NULL);
+//************ Change End ***************
+
   cur->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
@@ -456,6 +475,8 @@ thread_foreach (thread_action_func *func, void *aux)
     func (t, aux);
   }
 }
+
+//************ Change Start ***************
 
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void
@@ -562,6 +583,8 @@ thread_compute_recent_cpu_for_all(void)
   thread_foreach(thread_compute_recent_cpu, NULL);
 }
 
+//************ Change End ***************
+
 /* Idle thread.  Executes when no other thread is ready to run.
 
    The idle thread is initially put on the ready list by
@@ -650,11 +673,16 @@ init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->magic = THREAD_MAGIC;
 
+//************ Change Start ***************
+
   t->nice = 0;
   if (t == initial_thread)
     t->recent_cpu = 0;
   else
-    t->recent_cpu = thread_get_recent_cpu ();
+    t->recent_cpu = thread_get_recent_cpu();
+
+//************ Change Start ***************
+
 
   old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
