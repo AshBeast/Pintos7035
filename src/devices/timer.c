@@ -189,6 +189,8 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
+
+//************ Change Start ***************
   if(thread_mlfqs)
   {
     thread_current() -> recent_cpu = add_fp_int(thread_current() -> recent_cpu, 1);
@@ -202,6 +204,8 @@ timer_interrupt (struct intr_frame *args UNUSED)
       thread_compute_priority_for_all();
     }
   }
+//************ Change End ***************
+
   thread_wake(ticks);
 }
 

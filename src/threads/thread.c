@@ -674,14 +674,12 @@ init_thread (struct thread *t, const char *name, int priority)
   t->magic = THREAD_MAGIC;
 
 //************ Change Start ***************
-
   t->nice = 0;
   if (t == initial_thread)
     t->recent_cpu = 0;
   else
     t->recent_cpu = thread_get_recent_cpu();
-
-//************ Change Start ***************
+//************ Change End ***************
 
 
   old_level = intr_disable ();
