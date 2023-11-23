@@ -328,7 +328,11 @@ thread_wake (int64_t ticks)
     e = list_next (e);
     list_pop_front(&sleep_list);
     ASSERT (t->status == THREAD_ASLEEP);
-    list_push_back (&ready_list, &t->elem);
+
+  //************ Change Start ***************
+    list_insert_ordered (&ready_list, &t->elem, priority_order, NULL);
+  //************ Change End ***************
+
     t->status = THREAD_READY;
   }
 }
