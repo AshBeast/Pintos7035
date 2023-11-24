@@ -137,19 +137,29 @@ void thread_unblock (struct thread *);
  * - `thread_sleep`: Puts the current thread to sleep.
  * - `thread_wake`: Wakes threads that have reached their wake-up ticks.
  * - `earlier_wake_up`: Orders threads by wake-up time for sleep_list.
- * - `priority_order`: Orders threads by highest priority.
  */
 void thread_asleep (void);
 void thread_sleep (void);
 void thread_wake (int64_t ticks);
 bool earlier_wake_up(const struct list_elem *a, const struct  list_elem *b, void *aux);
-bool priority_order(const struct list_elem *a, const struct  list_elem *b, void *aux);
 
+//************ Change Start ***************
+/**
+* Thread priority management:
+* - `priority_order`: Orders threads by highest priority.
+* - `thread_compute_load_avg`: Computes the system's load_avg
+* - `thread_compute_recent_cpu`:Computes the thread's recent_cpu
+* - 'thread_compute_recent_cpu_for_all': Computes all thread's recent_cpu
+* - `thread_compute_priority`: Computes the thread's priority
+* - `thread_compute_priority_for_all`: Computes all thread's priority
+*/
+bool priority_order(const struct list_elem *a, const struct  list_elem *b, void *aux);
 void thread_compute_load_avg(void);
 void thread_compute_recent_cpu(struct thread *t, void *aux);
 void thread_compute_recent_cpu_for_all(void);
 void thread_compute_priority(struct thread *t, void *aux);
 void thread_compute_priority_for_all(void);
+//************ Change End ***************
 
 struct thread *thread_current (void);
 tid_t thread_tid (void);
